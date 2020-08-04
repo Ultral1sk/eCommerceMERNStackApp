@@ -4,6 +4,8 @@ console.log(`comming from auth`,User)
 
 // then we pass it as a middleware at the server.js auth route
 let auth = ( req, res , next) => {
+
+
   
   let token = req.cookies.w_auth;
 
@@ -21,12 +23,15 @@ let auth = ( req, res , next) => {
 
     req.token = token;
     req.user = user;
-    console.log(`INSIDE AUTH MIDDLEWARE FUNCTION`,req.token, token)
-    console.log(`INSIDE AUTH MIDDLEWARE FUNCTION`,req.user, user)
 
     next()
 
   });
+
+  let admin = ( req, res, next ) => {
+    // if user is trying to post something and is not an admin
+    
+  }
   
 }
 

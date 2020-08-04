@@ -5,13 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to Chrome",
-      "port": 9222,
+      "type": "node",
       "request": "attach",
-      "type": "pwa-chrome",
-      "webRoot": "${workspaceFolder}"
-    }
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}"
+  }  ,
 
+
+{
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/server/server.js"
+}
 
   ]
 }

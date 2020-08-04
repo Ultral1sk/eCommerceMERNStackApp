@@ -1,4 +1,5 @@
 require("dotenv").config();
+const data =  require('./config/data')
 const express      = require('express');
 const bodyParser   = require('body-parser')
 const cookieParser = require('cookie-parser')
@@ -17,13 +18,54 @@ app.use(express.urlencoded({ extended : true }));
 
 //Models
 
-const  User  = require(`./models/user`)
-
+const User  = require(`./models/user`)
+const Brand = require('./models/brand')
 
 
 //middleware
-const  auth  = require('./middleware/auth');
-const { json } = require("body-parser");
+const auth  = require('./middleware/auth');
+const admin  = require('./middleware/admin');
+const { response } = require("express");
+
+//=====================
+//       BRAND
+//=====================
+
+app.post('/api/product/brand', auth, admin, ( req, res ) => {
+  const brand = new Brand(req.body)
+
+  brand.save(( err, doc ) => {
+    if( err ) return res.json({ success: false, err })
+    res.status(200).json({
+      success: true,
+      brand : doc
+    })
+    console.log(doc)
+  })
+})
+
+
+// route for saving dummy data
+app.get('/api/products', ( req, res ) => {
+  
+  
+ data.map(productData => {
+    var brand = new Brand({
+      name : productData.name
+    })
+
+
+  brand.save(( err, result ) => {
+      if( err ) return res.json({ success : false, err })
+      res.status(200).json({
+        success : true,
+        userdata : result
+      })
+    console.log(result)
+    })
+  })
+})
+
 
 
 
