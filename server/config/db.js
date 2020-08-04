@@ -4,10 +4,10 @@ const connectDB = async () => {
   
   try {
     await mongoose.connect(db, {
-      // useNewUrlParser: true,
-      // useCreateIndex: true,
-      // useUnifiedTopology: true,
-      // useFindAndModify: false
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false
     });
     console.log("Mongo Atlas server is ready");
   } catch (error) {
