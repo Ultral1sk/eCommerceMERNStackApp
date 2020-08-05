@@ -39,6 +39,34 @@ const { populate } = require("./models/brand");
 //       PRODUCTS
 //=====================
 
+
+// BY ARRIVAL
+// articles?sortBy=createdAt&order=desc&limit=4
+
+// BY SELL
+// articles?sortBy=sold&order=desc&limit=100&skip=5
+
+app.get('/api/products/articles', ( req, res ) => {
+
+  let order  = req.query.order  ? req.query.order  : 'asc'
+  let sortBy = req.query.sortBy ? req.query.sortBy : "_id"
+  let limit  = req.query.limit  ? parseInt(req.query.limit)  : 100
+
+  Product
+  .find()
+  .populate('brand')
+  .populate('wood')
+  .sort([ [sortBy, order] ])
+  .limit(limit)
+  .exec(( err , articles ) => {
+    if( err ) return res.status(400).send( err )
+    else      return res.send(articles)
+  })
+
+})
+
+
+
 // /api/product/article?id=ahsdhasd,aASDASD,qQWEQWE&type=single
 app.get('/api/product/articles_by_id', ( req, res ) => {
   let type  = req.query.type;   // looking for the type of querry we are sending // req.querry comes from urlencoded and req.body comes from bodyparser.json
@@ -56,7 +84,7 @@ app.get('/api/product/articles_by_id', ( req, res ) => {
   // looking for a product or multiple products by id and returning the resut of it
   Product.
     find({ "_id" : {$in: items /* takes a single value or an array */}}) // look inside the array of ids weve created ans search them into our products
-    .populate('brand')
+    .populate('brand')        // we populate so we can create relationship between the product and the brand & wood  we aare looking for, with this we are going to receive their data also
     .populate('wood')
     .exec(( err, docs ) => {
       return res.status(200).send(docs)
@@ -96,13 +124,15 @@ app.post('/api/product/wood', auth, admin, ( req, res ) => {
   })
 })
 
-
 app.get('/api/product/woods', ( req, res ) => {
   Wood.find({}, ( err, woods ) => {
     if( err ) return res.status(400).send(400)
     else      return res.status(200).send(woods)
   })
 })
+
+
+
 
 //=====================
 //       BRAND
