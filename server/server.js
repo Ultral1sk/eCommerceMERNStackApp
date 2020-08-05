@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser')
 const PORT         = process.env.PORT || 3002;
 const connectDB    = require('./config/db');
 const app          = express();
+const mongoose = require('mongoose');
+
 
 connectDB()
 
@@ -27,6 +29,8 @@ const Product  = require('./models/product')
 //middleware
 const auth  = require('./middleware/auth');
 const admin  = require('./middleware/admin');
+const { Mongoose } = require("mongoose");
+const { populate } = require("./models/brand");
 
 
 
@@ -35,8 +39,29 @@ const admin  = require('./middleware/admin');
 //       PRODUCTS
 //=====================
 
+// /api/product/article?id=ahsdhasd,aASDASD,qQWEQWE&type=single
+app.get('/api/product/articles_by_id', ( req, res ) => {
+  let type  = req.query.type;   // looking for the type of querry we are sending // req.querry comes from urlencoded and req.body comes from bodyparser.json
+  let items = req.query.id;     // taking the id of the querry
+  
+  // if the type is array,  take the ids from the querry split it with commas inbetween
+  if( type === "array" ) {
+    let ids = req.query.id.split(',')
+    items = []
+    items = ids.map( item => {
+      return mongoose.Types.ObjectId(item)  // convert those ids into mongodb ids
+    })
+  }
 
-
+  // looking for a product or multiple products by id and returning the resut of it
+  Product.
+    find({ "_id" : {$in: items /* takes a single value or an array */}}) // look inside the array of ids weve created ans search them into our products
+    .populate('brand')
+    .populate('wood')
+    .exec(( err, docs ) => {
+      return res.status(200).send(docs)
+    })
+})
 app.post('/api/product/article', auth, admin, ( req, res ) => {
   const product = new Product(req.body)
 
