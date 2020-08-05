@@ -17,15 +17,67 @@ app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
 
 //Models
-
 const User  = require(`./models/user`)
 const Brand = require('./models/brand')
+const Wood  = require('./models/wood')
+const Product  = require('./models/product')
+
 
 
 //middleware
 const auth  = require('./middleware/auth');
 const admin  = require('./middleware/admin');
-const { response } = require("express");
+
+
+
+
+//=====================
+//       PRODUCTS
+//=====================
+
+
+
+app.post('/api/product/article', auth, admin, ( req, res ) => {
+  const product = new Product(req.body)
+
+  product.save(( err , doc ) => {
+    if( err ) return res.status(400).json({ success: false, err})
+    else      return res.status(200).json({ 
+      success: true, article : doc
+    })
+  })
+
+})
+
+
+
+
+
+
+//=====================
+//       WOOD
+//=====================
+
+app.post('/api/product/wood', auth, admin, ( req, res ) => {
+
+  const wood = new Wood(req.body)
+
+  wood.save(( err, doc ) => {
+    if( err ) return res.json({ success: false, err})
+    else      return res.status(200).json({
+      success : true,
+      wood : doc
+    })
+  })
+})
+
+
+app.get('/api/product/woods', ( req, res ) => {
+  Wood.find({}, ( err, woods ) => {
+    if( err ) return res.status(400).send(400)
+    else      return res.status(200).send(woods)
+  })
+})
 
 //=====================
 //       BRAND
@@ -40,31 +92,54 @@ app.post('/api/product/brand', auth, admin, ( req, res ) => {
       success: true,
       brand : doc
     })
-    console.log(doc)
+  })
+})
+
+app.get('/api/product/brands', auth, admin, ( req, res ) => {
+  Brand.find({}, ( err, woods ) => {
+    if( err ) return res.status(400).send(400)
+    else      return res.status(200).send(woods)
   })
 })
 
 
-// route for saving dummy data
-app.get('/api/products', ( req, res ) => {
+// // route for saving dummy data
+// app.get('/', ( req, res ) => {
   
   
- data.map(productData => {
-    var brand = new Brand({
-      name : productData.name
-    })
+//  data.map(productData => {
+//     var brand = new Brand({
+//       name : productData.name
+//     })
 
 
-  brand.save(( err, result ) => {
-      if( err ) return res.json({ success : false, err })
-      res.status(200).json({
-        success : true,
-        userdata : result
-      })
-    console.log(result)
-    })
-  })
-})
+//   brand.save(( err, result ) => {
+//       if( err ) return res.json({ success : false, err })
+//       res.status(200).json({
+//         success : true,
+//         userdata : result
+//       })
+//     console.log(result)
+//     })
+//   })
+
+//   data.product.map(productData => {
+//     var product = new Product({
+//       name : productData.name
+//     })
+
+
+//     product.save(( err, result ) => {
+//       if( err ) return res.json({ success : false, err })
+//       res.status(200).json({
+//         success : true,
+//         userdata : result
+//       })
+//     console.log(result)
+//     })
+//   })
+
+// })
 
 
 
